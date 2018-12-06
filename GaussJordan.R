@@ -29,6 +29,7 @@ gaussJordanMethod <- function(augMatrix) {
       }
       inner_row = inner_row + 1
     }
+    print(augMatrix)
     current_row = current_row + 1
   }
   return(augMatrix[, ncol(augMatrix)])
