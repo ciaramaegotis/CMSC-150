@@ -33,8 +33,18 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
     counter = 1
     row_counter = row_counter + 1
   }
-  matrix[1:length(plants)*length(warehouses)] = as.vector(shipping_costs)
+  objective_function = as.vector(t(shipping_costs))
+  counter = 1
+  while (counter <= length(plants)*length(warehouses)){
+    matrix[row_counter, counter] = 0 - objective_function[counter]
+    counter = counter + 1
+  }
+  matrix[row_counter, slack_index] = 1
   print(matrix)
+  matrix = gaussJordanSimplex(matrix)
+  print(matrix)
+  solutions = getSolution(matrix)
+  print(solutions)
 }
 
 normalize <- function(augMatrix, row, col){
@@ -77,7 +87,7 @@ getSolution <- function(augMatrix){
     if (zero_counter[counter] == nrow(augMatrix)-1 && one_counter[counter] == 1){
       final_array[counter] = augMatrix[match(c(1), augMatrix[, counter]), ncol(augMatrix)]
     }else{
-      final_array[counter] <- NA
+      final_array[counter] = 0
     }
     counter = counter + 1
   }
