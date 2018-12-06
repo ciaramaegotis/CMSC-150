@@ -25,15 +25,16 @@ a <- gfilebrowse("Upload csv file...",cont=qsi,
 b <- gfilebrowse("Upload csv file...",cont=s, 
                  handler=function(h,...){
                    print(svalue(b))
-                   df1 <<- read.csv(svalue(b),header=TRUE,sep=",")
-                   #vector_1 = data.matrix(as.numeric(df1$V1), rownames.force=NA)
-                   #vector_2 = data.matrix(as.numeric(df1$V2), rownames.force=NA)
-                   #raw_data = matrix(0L, nrow = 2, ncol = nrow(vector_1), byrow=TRUE)
-                   #raw_data[1, ] = vector_1
-                   #raw_data[2, ] = vector_2
-                   #raw_data <<- raw_data
-                   #obj <- gtable(t(raw_data), container=s)
-                   print(df1)
+                   df1 <<- read.csv(svalue(b),header=FALSE,sep=",")
+                   matrix = data.matrix(df1, rownames.force=NA)
+                   plants = c("Denver", "Pheonix", "Dallas")
+                   warehouses = c("Sacramento, California", "Salt Lake City, Utah", "Albuquerue, Mexico", "Chicago, Illinois", "New York City, New York")
+                   total_manufacturer = matrix[1:3, 2:6]
+                   demands = matrix[7, 2:6]
+                   supply = matrix[8:10, 1]
+                   shipping_costs =  matrix[8:10, 2:6]
+                   source("Simplex.R")
+                   setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
                  })
 
 c <- gfilebrowse("Upload csv file...",cont=pr, 

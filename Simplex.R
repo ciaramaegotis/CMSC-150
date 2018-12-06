@@ -1,3 +1,42 @@
+setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs, plants, warehouses){
+  matrix = matrix(0L, nrow = length(plants)+length(warehouses)+1, ncol = (length(plants)*length(warehouses))+(length(plants)+length(warehouses)+2), byrow = TRUE)
+  slack_index = (length(plants)*length(warehouses))+1
+  row_counter = 1
+  marker = 1
+  counter = 1
+  while (row_counter <= length(plants)){
+    while (counter <= marker+(length(warehouses)-1)){
+      matrix[row_counter, counter] = 1
+      counter = counter + 1
+    }
+    matrix[row_counter, ncol(matrix)] = supply[row_counter]
+    matrix[row_counter, slack_index] = 1
+    slack_index = slack_index + 1
+    marker = counter
+    row_counter = row_counter + 1
+  }
+  demands_limit_index = row_counter + length(warehouses)
+  counter = 1
+  marker = 1
+  original = 1
+  while (row_counter < demands_limit_index){
+    while (counter <= length(plants)){
+      matrix[row_counter, marker] = 1
+      marker = marker + length(warehouses)
+      counter = counter + 1
+    }
+    matrix[row_counter, ncol(matrix)] = demands[original]
+    matrix[row_counter, slack_index] = 1
+    slack_index = slack_index + 1
+    original = original + 1
+    marker = original
+    counter = 1
+    row_counter = row_counter + 1
+  }
+  matrix[1:length(plants)*length(warehouses)] = as.vector(shipping_costs)
+  print(matrix)
+}
+
 normalize <- function(augMatrix, row, col){
   augMatrix[row,] = augMatrix[row,]/augMatrix[row, col]
   return(augMatrix)
@@ -44,9 +83,3 @@ getSolution <- function(augMatrix){
   }
   return(final_array)
 }
-
-matrix = matrix(c(7, 11, 1, 0, 0, 0, 0, 77, 10, 8, 0, 1, 0, 0, 0, 80, 1, 0, 0, 0, 1, 0, 0, 9, 0, 1, 0, 0, 0, 1, 0, 6, -150, -175, 0, 0, 0, 0, 1, 0), nrow = 5, ncol = 8, byrow=TRUE)
-print(matrix)
-matrix = gaussJordanSimplex(matrix)
-print(matrix)
-getSolution(matrix)
