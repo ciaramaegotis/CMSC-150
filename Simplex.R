@@ -1,5 +1,6 @@
 setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs, plants, warehouses){
   matrix = matrix(0L, nrow = length(plants)+length(warehouses)+1, ncol = (length(plants)*length(warehouses))+(length(plants)+length(warehouses)+2), byrow = TRUE)
+  colnames(matrix) <- c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11", "X12", "X13", "X14", "X15", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "Z", "ANS")
   slack_index = (length(plants)*length(warehouses))+1
   row_counter = 1
   marker = 1
@@ -40,16 +41,38 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
     counter = counter + 1
   }
   matrix[row_counter, slack_index] = 1
-  print(matrix)
-  matrix = gaussJordanSimplex(matrix)
-  print(matrix)
-  solutions = getSolution(matrix)
-  print(solutions)
+  return(matrix)
 }
 
 normalize <- function(augMatrix, row, col){
   augMatrix[row,] = augMatrix[row,]/augMatrix[row, col]
   return(augMatrix)
+}
+
+getFunctions <- function(matrix){
+  variables = colnames(matrix)
+  functions = matrix(0L, nrow = nrow(matrix), ncol = 1, byrow=TRUE)
+  row_counter = 1
+  while (row_counter <= nrow(matrix)){
+    col_counter = 1
+    string = paste("", matrix[row_counter, ncol(matrix)], " = ")
+    while (col_counter < ncol(matrix)-1){
+      if (matrix[row_counter, col_counter] != 0){
+          string = paste(string, matrix[row_counter, col_counter], "*", variables[col_counter], " + ")
+      }
+      col_counter = col_counter + 1
+    }
+    string = substr(string, 1, nchar(string)-3)
+    functions[row_counter] = string
+    row_counter = row_counter + 1
+  }
+  print(functions)
+  return(functions)
+  #return the list of functions
+}
+
+modifyFunction <- function(newFunction, index, matrix){
+  return(matrix)
 }
 
 gaussJordanSimplex <- function(augMatrix){
@@ -82,6 +105,7 @@ getSolution <- function(augMatrix){
   zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
   one_counter = apply(augMatrix, 2, function(c)sum(c==1))
   final_array = matrix(0L, nrow = 1, ncol = ncol(augMatrix)-1, byrow = TRUE)
+  colnames(final_array) <- c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11", "X12", "X13", "X14", "X15", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "Z")
   counter = 1
   while (counter < ncol(augMatrix)){
     if (zero_counter[counter] == nrow(augMatrix)-1 && one_counter[counter] == 1){

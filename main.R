@@ -34,7 +34,20 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    supply = matrix[8:10, 1]
                    shipping_costs =  matrix[8:10, 2:6]
                    source("Simplex.R")
-                   setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
+                   matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
+                   obj <- gtable(matrix, container=s)
+                   functions = getFunctions(matrix)
+                   functions_counter = 1
+                   while (functions_counter <= length(functions)){
+                     functionOutput <- glabel(text = functions[functions_counter], markup = FALSE, editable = TRUE, handler = function(h,...){print("EDITTED")},
+                                              action = NULL, container = s)
+                     functions_counter = functions_counter + 1
+                   }
+                   #TO DO: create global button to solve
+                   #matrix = gaussJordanSimplex(matrix)
+                   #print(matrix)
+                   #solutions = getSolution(matrix)
+                   #print(solutions)
                  })
 
 c <- gfilebrowse("Upload csv file...",cont=pr, 
