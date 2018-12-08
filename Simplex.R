@@ -27,7 +27,7 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
       counter = counter + 1
     }
     matrix[row_counter, ncol(matrix)] = demands[original]
-    matrix[row_counter, slack_index] = 1
+    matrix[row_counter, slack_index] = -1
     slack_index = slack_index + 1
     original = original + 1
     marker = original
@@ -37,10 +37,11 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
   objective_function = as.vector(t(shipping_costs))
   counter = 1
   while (counter <= length(plants)*length(warehouses)){
-    matrix[row_counter, counter] = 0 - objective_function[counter]
+    matrix[row_counter, counter] = objective_function[counter]
     counter = counter + 1
   }
   matrix[row_counter, slack_index] = 1
+  print(matrix)
   return(matrix)
 }
 
