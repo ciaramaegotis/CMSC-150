@@ -76,12 +76,25 @@ modifyFunction <- function(newFunction, index, matrix){
   return(matrix)
 }
 
+getColumn <- function(augMatrix){
+  col_counter = 1
+  negone_counter = apply(augMatrix, 2, function(c)sum(c==-1))
+  zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
+  while (col_counter <= ncol(augMatrix)){
+    if (negone_counter[col_counter] == 1 && zero_counter[col_counter] == nrow(augMatrix)-1){
+      return(which(augMatrix[, col_counter] < 0)[1])
+    }
+  }
+}
+
 gaussJordanSimplex <- function(augMatrix){
-  iteration = 0
-  min = min(augMatrix[nrow(augMatrix),])
-  while (min < 0){
-    column = which.min(augMatrix[nrow(augMatrix),])
+  basicSolutionSet = getSolution(augMatrix)
+  while (sum(basicSolutionSet < 0) != 0){
+    column = which(augMatrix[getColumn(augMatrix),] > 0)[1]
+    print("done :)")
     row = which.max(1/(augMatrix[, ncol(augMatrix)]/augMatrix[, column]))
+    print(column)
+    print(row)
     #now that we have the row and column, normalize the row
     augMatrix = normalize(augMatrix, row, column)
     row_counter = 1
@@ -96,8 +109,7 @@ gaussJordanSimplex <- function(augMatrix){
       }
       row_counter = row_counter + 1
     }
-    min = min(augMatrix[nrow(augMatrix), ])
-    iteration = iteration + 1
+    basicSolutionSet = getSolution(augMatrix)
   }
   return(augMatrix)
 }
@@ -105,12 +117,15 @@ gaussJordanSimplex <- function(augMatrix){
 getSolution <- function(augMatrix){
   zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
   one_counter = apply(augMatrix, 2, function(c)sum(c==1))
+  negone_counter = apply(augMatrix, 2, function(c)sum(c==-1))
   final_array = matrix(0L, nrow = 1, ncol = ncol(augMatrix)-1, byrow = TRUE)
   colnames(final_array) <- c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11", "X12", "X13", "X14", "X15", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "Z")
   counter = 1
   while (counter < ncol(augMatrix)){
-    if (zero_counter[counter] == nrow(augMatrix)-1 && one_counter[counter] == 1){
+    if (zero_counter[counter] == nrow(augMatrix)-1 && one_counter[counter] == 1 && negone_counter[counter] == 0){
       final_array[counter] = augMatrix[match(c(1), augMatrix[, counter]), ncol(augMatrix)]
+    }else if(zero_counter[counter] == nrow(augMatrix)-1 && negone_counter[counter] == 1 && one_counter[counter] == 0){
+      final_array[counter] = 0 - augMatrix[match(c(-1), augMatrix[, counter]), ncol(augMatrix)]
     }else{
       final_array[counter] = 0
     }

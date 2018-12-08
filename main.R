@@ -44,10 +44,10 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                      functions_counter = functions_counter + 1
                    }
                    #TO DO: create global button to solve
-                   #matrix = gaussJordanSimplex(matrix)
-                   #print(matrix)
-                   #solutions = getSolution(matrix)
-                   #print(solutions)
+                   matrix = gaussJordanSimplex(matrix)
+                   print(matrix)
+                   solutions = getSolution(matrix)
+                   print(solutions)
                  })
 
 c <- gfilebrowse("Upload csv file...",cont=pr, 
