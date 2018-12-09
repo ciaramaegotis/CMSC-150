@@ -236,19 +236,23 @@ pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, in
         setOfVar= gaussJordanMethod(augMatrix)
         functionPoly = toStringFunction(setOfVar, svalue(pr_input)+1)
         #display the function in GUI
-        functionOutput <- glabel(text = functionPoly, markup = FALSE, editable = FALSE, handler = NULL,
-                                 action = NULL, container = pr)
+        svalue(functionOutput) <- functionPoly
         parse(text = functionPoly)
         eval(parse(text = functionPoly))
         plotValues <<- plotValues
       }, action = NULL, container = pr)
 
+functionOutput <- glabel(text = "", markup = FALSE, editable = FALSE, handler = NULL,
+                         action = NULL, container = pr)
+
 pr_evaluate <- gedit(text = "Num to evaluate", width = 25, coerce.with = as.numeric, initial.msg="",
                handler = function(h,...){
                  #display the output in GUI
-                 output <- glabel(text = plotValues(svalue(pr_evaluate)), markup = FALSE, editable = FALSE, handler = NULL,
-                                  action = NULL, container = pr)
+                 svalue(output) <- plotValues(svalue(pr_evaluate))
                }, action = NULL, container = pr)
+
+output <- glabel(text = "", markup = FALSE, editable = FALSE, handler = NULL,
+                 action = NULL, container = pr)
 
 qsi_input<- gedit(text = "Enter number", width = 25, coerce.with = as.numeric, initial.msg="",
                   handler = function(h,...){
