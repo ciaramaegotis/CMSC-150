@@ -12,6 +12,7 @@ pr <- ggroup(container = nb, label="Polynomial Regression", horizontal = FALSE)
 qsi <- ggroup(container = nb, label="Quadratic Spline Interpolation", horizontal = FALSE)
 s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE, use.scrollwindow=TRUE, expand=TRUE)
 
+isShow <- FALSE
 #QSI FILE UPLOADER
 a <- gfilebrowse("Upload csv file...",cont=qsi, 
      handler=function(h,...){
@@ -218,6 +219,9 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    initLabel <- glabel("Initial Tableau", container=s)
                    initTable <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
                    funcs <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   iteration_label <- glabel("BSS per Iteration", container=s)
+                   iteration_array <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   iteration_array <<- iteration_array
                    gaussLabel <- glabel("Final Matrix", container=s)
                    gaussJordan <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
                    solLabel <- glabel("Solution Set", container = s)
@@ -230,12 +234,17 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                      functions = getFunctions(matrix)
                      colnames(functions) <- c("Equations")
                      funcs[] <- functions
-                     matrix = gaussJordanSimplex(matrix)
+                     matrix = gaussJordanSimplex(matrix, isShow)
                      gaussJordan[] <- matrix
                      solutions = getSolution(matrix)
                      solTable[] <- solutions
                    })
                  })
+
+showSolution <- gcheckbox("Show basic solution (initial and per iteration)", container=s, handler=function(h,...) {
+  isShow <<- svalue(h$obj)
+})
+
 #POLYNOMIAL REGRESSION FILE UPLOADER
 c <- gfilebrowse("Upload csv file...",cont=pr, 
                  handler=function(h,...){
@@ -271,7 +280,6 @@ pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, in
         pr_estimate[, 1] = raw_data[1, ]
         pr_estimate_counter = 1
         while (pr_estimate_counter <= nrow(pr_estimate)){
-          print(pr_estimate_counter)
           pr_estimate[pr_estimate_counter, 2] = plotValues(pr_estimate[pr_estimate_counter, 1])
           pr_estimate_counter = pr_estimate_counter + 1
         } 

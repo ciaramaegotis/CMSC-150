@@ -83,7 +83,8 @@ getColumn <- function(augMatrix){
   }
 }
 
-gaussJordanSimplex <- function(augMatrix){
+gaussJordanSimplex <- function(augMatrix, isShow){
+  iterArray <- c(getSolution(augMatrix))
   tr = vector(length = nrow(augMatrix)-1)
   feasible = FALSE
   while ( !feasible ) {
@@ -123,6 +124,7 @@ gaussJordanSimplex <- function(augMatrix){
     }else{
       feasible = TRUE
     }
+    iterArray <- rbind(iterArray, getSolution(augMatrix)[1,])
   }
   #now that we have feasible basic solution set, we can now proceed with normal maximization
   while (length( which(augMatrix[nrow(augMatrix), 1:ncol(augMatrix)-1] <0)) > 0 ) {
@@ -153,6 +155,12 @@ gaussJordanSimplex <- function(augMatrix){
       }
       i = i + 1
     }
+    iterArray <- rbind(iterArray, getSolution(augMatrix)[1,])
+  }
+  if (isShow == TRUE){
+    iteration_array[] <- iterArray
+  }else{
+    iteration_array[] <- c(0)
   }
   return(augMatrix)
 }
