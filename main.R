@@ -33,8 +33,6 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    demands = matrix[7, 2:6]
                    supply = matrix[8:10, 1]
                    shipping_costs =  matrix[8:10, 2:6]
-                   source("Simplex.R")
-                   matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
                    tablePractice <- glayout(homogeneous = FALSE, spacing = 10, container = s)
                    tablePractice[1, 2] <- "Demands"
                    tablePractice[2, 2] <- "Supply"
@@ -69,6 +67,9 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                      }
                      shippingCost_row = shippingCost_row + 1
                    }
+                   source("Simplex.R")
+                   matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
+                   initLabel <- glabel("Initial Tableau", container=s)
                    obj <- gtable(matrix, container=s, editable=TRUE)
                    functions = getFunctions(matrix)
                    functions_counter = 1
@@ -79,9 +80,11 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    }
                    #TO DO: create global button to solve
                    matrix = gaussJordanSimplex(matrix)
-                   print(matrix)
+                   gaussLabel <- glabel("Final Matrix", container=s)
+                   gaussJordan <- gtable(matrix, container=s, editable=TRUE)
                    solutions = getSolution(matrix)
-                   print(solutions)
+                   solLabel <- glabel("Solution Set", container = s)
+                   solTable <- gtable(solutions, container=s, editable=TRUE)
                  })
 
 c <- gfilebrowse("Upload csv file...",cont=pr, 
