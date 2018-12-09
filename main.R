@@ -35,7 +35,41 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    shipping_costs =  matrix[8:10, 2:6]
                    source("Simplex.R")
                    matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
-                   obj <- gtable(matrix, container=s)
+                   tablePractice <- glayout(homogeneous = FALSE, spacing = 10, container = s)
+                   tablePractice[1, 2] <- "Demands"
+                   tablePractice[2, 2] <- "Supply"
+                   tablePractice[2, 3] <- "California"
+                   tablePractice[2, 4] <- "Utah"
+                   tablePractice[2, 5] <- "New Mexico"
+                   tablePractice[2, 6] <- "Illinois"
+                   tablePractice[2, 7] <- "New York City"
+                   tablePractice[2, 1] <- "Plants"
+                   tablePractice[3, 1] <- "Denver"
+                   tablePractice[4, 1] <- "Pheonix"
+                   tablePractice[5, 1] <- "Dallas"
+                   supplyCounter = 1
+                   while (supplyCounter <= length(supply)){
+                     tablePractice[2+supplyCounter, 2] <- gedit(text = supply[supplyCounter], width = 10, coerce.with = as.numeric, initial.msg="",
+                                                               handler = NULL, action = NULL)
+                     supplyCounter = supplyCounter + 1
+                   }
+                   demandsCounter = 1
+                   while (demandsCounter <= length(demands)){
+                     tablePractice[1, 2+demandsCounter] <- gedit(text = demands[demandsCounter], width = 10, coerce.with = as.numeric, initial.msg="",
+                                                                handler = NULL, action = NULL)
+                     demandsCounter = demandsCounter + 1
+                   }
+                   shippingCost_row = 1
+                   while (shippingCost_row <= nrow(shipping_costs)){
+                     shippingCost_col = 1
+                     while (shippingCost_col <= ncol(shipping_costs)){
+                       tablePractice[2+shippingCost_row, 2+shippingCost_col] <- gedit(text = shipping_costs[shippingCost_row, shippingCost_col], width = 10, coerce.with = as.numeric, initial.msg="",
+                                                                   handler = NULL, action = NULL)
+                       shippingCost_col = shippingCost_col + 1
+                     }
+                     shippingCost_row = shippingCost_row + 1
+                   }
+                   obj <- gtable(matrix, container=s, editable=TRUE)
                    functions = getFunctions(matrix)
                    functions_counter = 1
                    while (functions_counter <= length(functions)){
