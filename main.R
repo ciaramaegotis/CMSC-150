@@ -19,8 +19,10 @@ a <- gfilebrowse("Upload csv file...",cont=qsi,
        raw_data[1, ] = vector_1
        raw_data[2, ] = vector_2
        raw_data <<- raw_data
-       obj <- gtable(t(raw_data), container=qsi)
+       qsi_table[] <- t(raw_data)
      })
+
+qsi_table <- gtable(c(0), container=qsi)
 
 b <- gfilebrowse("Upload csv file...",cont=s, 
                  handler=function(h,...){
@@ -224,8 +226,9 @@ c <- gfilebrowse("Upload csv file...",cont=pr,
                    raw_data[1, ] = vector_1
                    raw_data[2, ] = vector_2
                    raw_data <<- raw_data
-                   obj <- gtable(t(raw_data), container=pr)
+                   pr_table[] <- t(raw_data)
                  })
+pr_table <- obj <- gtable(c(0), container=pr)
 
 pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, initial.msg="",
       handler = function(h,...){
@@ -254,6 +257,7 @@ pr_evaluate <- gedit(text = "Num to evaluate", width = 25, coerce.with = as.nume
 output <- glabel(text = "", markup = FALSE, editable = FALSE, handler = NULL,
                  action = NULL, container = pr)
 
+
 qsi_input<- gedit(text = "Enter number", width = 25, coerce.with = as.numeric, initial.msg="",
                   handler = function(h,...){
                     source("QSI.R")
@@ -268,6 +272,12 @@ qsi_input<- gedit(text = "Enter number", width = 25, coerce.with = as.numeric, i
                     source("GaussJordan.R")
                     afterGaussJordan = gaussJordanMethod(preGaussJordan)
                     functions = getFunctions(afterGaussJordan, raw_data, numOfEquations)
-                    function_table <- gtable(functions, container = qsi)
+                    function_table[] <- functions
                     solveQSI(svalue(qsi_input), functions, raw_data[1,])
                     }, action = NULL, container = qsi)
+
+function_table <- gtable(c(0), container = qsi)
+chosen_func_qsi <- glabel("Appropriate Function for Input: ", container = qsi)
+chosen_func_qsi_output <- glabel("", container = qsi)
+output_label_qsi <- glabel("Output", container = qsi)
+output_qsi <- glabel("", container = qsi)

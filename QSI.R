@@ -4,11 +4,10 @@ solveQSI <- function(input, functions, x_array){
   while (counter < length(x_array)-1){
     if (input >= x_array[counter] && input <= x_array[counter+1]){
       isFound = TRUE
-      glabel(text = functions[counter], markup = FALSE, editable = FALSE, handler = NULL,
-             action = NULL, container = qsi, toolkit = guiToolkit())
+      svalue(chosen_func_qsi_output) <- functions[counter]
       eval(parse(text = functions[counter]))
-      glabel(text = evaluateFunction(input), markup = FALSE, editable = FALSE, handler = NULL,
-             action = NULL, container = qsi, toolkit = guiToolkit())
+      svalue(output_qsi) <- evaluateFunction(input)
+      break
     }
     counter = counter + 1
   }
