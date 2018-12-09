@@ -240,10 +240,24 @@ pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, in
         parse(text = functionPoly)
         eval(parse(text = functionPoly))
         plotValues <<- plotValues
+        pr_estimate = matrix(0L, nrow = ncol(raw_data), ncol = 2, byrow = TRUE)
+        pr_estimate[, 1] = raw_data[1, ]
+        pr_estimate_counter = 1
+        while (pr_estimate_counter <= nrow(pr_estimate)){
+          print(pr_estimate_counter)
+          pr_estimate[pr_estimate_counter, 2] = plotValues(pr_estimate[pr_estimate_counter, 1])
+          pr_estimate_counter = pr_estimate_counter + 1
+        } 
+        colnames(pr_estimate) <- c("X", "Predicted Y")
+        pr_estimate_output[] <- pr_estimate
       }, action = NULL, container = pr)
 
 functionOutput <- glabel(text = "", markup = FALSE, editable = FALSE, handler = NULL,
                          action = NULL, container = pr)
+
+pr_estimate_output_def = matrix(0L, nrow = 1, ncol = 2, byrow = TRUE)
+colnames(pr_estimate_output_def) <- c("X", "Predicted Y")
+pr_estimate_output <- gtable(pr_estimate_output_def, container = pr)
 
 pr_evaluate <- gedit(text = "Num to evaluate", width = 25, coerce.with = as.numeric, initial.msg="",
                handler = function(h,...){
