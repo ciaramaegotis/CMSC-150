@@ -18,10 +18,28 @@ a <- gfilebrowse("Upload csv file...",cont=qsi,
        raw_data[1, ] = vector_1
        raw_data[2, ] = vector_2
        raw_data <<- raw_data
-       qsi_table[] <- t(raw_data)
+       trans_raw_data = t(raw_data)
+       colnames(trans_raw_data) <- c("X", "Y")
+       qsi_table[] <- trans_raw_data
+       source("QSI.R")
+       numOfEquations = (3*(ncol(raw_data)-1))-1
+       augMatrix = matrix(0L, nrow = numOfEquations, ncol = numOfEquations + 1, byrow=TRUE)
+       preAugMatrix = matrix(0L, nrow=numOfEquations, ncol = 4, byrow = TRUE)
+       preAugMatrix <<- preAugMatrix
+       preAugMatrix = getInternalFunctions(raw_data)
+       preAugMatrix = getExternalFunctions(raw_data, preAugMatrix)
+       preAugMatrix = getConnectingFunctions(raw_data, preAugMatrix)
+       preGaussJordan = setUpMatrix(augMatrix, preAugMatrix, raw_data, numOfEquations)
+       source("GaussJordan.R")
+       afterGaussJordan = gaussJordanMethod(preGaussJordan)
+       functions = getFunctions(afterGaussJordan, raw_data, numOfEquations)
+       functions <<- functions
+       function_table[] <- functions
      })
 
-qsi_table <- gtable(c(0), container=qsi)
+qsi_table_def = matrix(0L, nrow = 1, ncol = 2, byrow=TRUE)
+colnames(qsi_table_def) = c("X", "Y")
+qsi_table <- gtable(qsi_table_def, container=qsi)
 
 b <- gfilebrowse("Upload csv file...",cont=s, 
                  handler=function(h,...){
@@ -223,9 +241,13 @@ c <- gfilebrowse("Upload csv file...",cont=pr,
                    raw_data[1, ] = vector_1
                    raw_data[2, ] = vector_2
                    raw_data <<- raw_data
-                   pr_table[] <- t(raw_data)
+                   trans_raw_data = t(raw_data)
+                   colnames(trans_raw_data) <- c("X", "Y")
+                   pr_table[] <- trans_raw_data
                  })
-pr_table <- obj <- gtable(c(0), container=pr)
+pr_table_def = matrix(0L, nrow = 1, ncol = 2, byrow=TRUE)
+colnames(pr_table_def) = c("X", "Y")
+pr_table <- obj <- gtable(pr_table_def, container=pr)
 
 pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, initial.msg="",
       handler = function(h,...){
@@ -268,27 +290,14 @@ pr_evaluate <- gedit(text = "Num to evaluate", width = 25, coerce.with = as.nume
 output <- glabel(text = "", markup = FALSE, editable = FALSE, handler = NULL,
                  action = NULL, container = pr)
 
-
+function_table <- gtable(c(0), container = qsi)
 qsi_input<- gedit(text = "Enter number", width = 25, coerce.with = as.numeric, initial.msg="",
                   handler = function(h,...){
                     source("QSI.R")
-                    numOfEquations = (3*(ncol(raw_data)-1))-1
-                    augMatrix = matrix(0L, nrow = numOfEquations, ncol = numOfEquations + 1, byrow=TRUE)
-                    preAugMatrix = matrix(0L, nrow=numOfEquations, ncol = 4, byrow = TRUE)
-                    preAugMatrix <<- preAugMatrix
-                    preAugMatrix = getInternalFunctions(raw_data)
-                    preAugMatrix = getExternalFunctions(raw_data, preAugMatrix)
-                    preAugMatrix = getConnectingFunctions(raw_data, preAugMatrix)
-                    preGaussJordan = setUpMatrix(augMatrix, preAugMatrix, raw_data, numOfEquations)
-                    source("GaussJordan.R")
-                    afterGaussJordan = gaussJordanMethod(preGaussJordan)
-                    functions = getFunctions(afterGaussJordan, raw_data, numOfEquations)
-                    function_table[] <- functions
                     solveQSI(svalue(qsi_input), functions, raw_data[1,])
                     }, action = NULL, container = qsi)
 
-function_table <- gtable(c(0), container = qsi)
 chosen_func_qsi <- glabel("Appropriate Function for Input: ", container = qsi)
 chosen_func_qsi_output <- glabel("", container = qsi)
-output_label_qsi <- glabel("Output", container = qsi)
+output_label_qsi <- glabel("Output: ", container = qsi)
 output_qsi <- glabel("", container = qsi)
