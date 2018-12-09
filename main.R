@@ -104,10 +104,10 @@ pr_input<- gedit(text = "Enter degree", width = 25, coerce.with = as.numeric, in
       handler = function(h,...){
         source('Regression.R')
         source("GaussJordan.R")
-        augMatrix = matrix(0L, nrow = svalue(pr_input), ncol = svalue(pr_input)+1, byrow=TRUE)
-        augMatrix = fillUpMatrix(augMatrix, svalue(pr_input), raw_data)
+        augMatrix = matrix(0L, nrow = svalue(pr_input)+1, ncol = svalue(pr_input)+2, byrow=TRUE)
+        augMatrix = fillUpMatrix(augMatrix, svalue(pr_input)+1, raw_data)
         setOfVar= gaussJordanMethod(augMatrix)
-        functionPoly = toStringFunction(setOfVar, svalue(pr_input))
+        functionPoly = toStringFunction(setOfVar, svalue(pr_input)+1)
         #display the function in GUI
         functionOutput <- glabel(text = functionPoly, markup = FALSE, editable = FALSE, handler = NULL,
                                  action = NULL, container = pr)
