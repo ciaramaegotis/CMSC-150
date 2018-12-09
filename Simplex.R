@@ -1,4 +1,5 @@
 setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs, plants, warehouses){
+  #this function sets up the matrix based on the given constraints
   matrix = matrix(0L, nrow = length(plants)+length(warehouses)+1, ncol = (length(plants)*length(warehouses))+(length(plants)+length(warehouses)+2), byrow = TRUE)
   colnames(matrix) <- c("X1", "X2", "X3", "X4", "X5", "X6", "X7", "X8", "X9", "X10", "X11", "X12", "X13", "X14", "X15", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "Z", "ANS")
   slack_index = (length(plants)*length(warehouses))+1
@@ -65,23 +66,6 @@ getFunctions <- function(matrix){
   #return the list of functions
 }
 
-modifyFunction <- function(newFunction, index, matrix){
-  return(matrix)
-}
-
-getColumn <- function(augMatrix){
-  col_counter = 1
-  negone_counter = apply(augMatrix, 2, function(c)sum(c==-1))
-  zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
-  one_counter = apply(augMatrix, 2, function(c)sum(c==1))
-  while (col_counter <= ncol(augMatrix)){
-    if (negone_counter[col_counter] == 1 && zero_counter[col_counter] == nrow(augMatrix)-1 && one_counter[col_counter] == 0){
-      #on that column, which row has the negative one
-      return(which(augMatrix[, col_counter] < 0)[1])
-    }
-    col_counter = col_counter + 1
-  }
-}
 
 gaussJordanSimplex <- function(augMatrix, isShow){
   iterArray <- c(getSolution(augMatrix))

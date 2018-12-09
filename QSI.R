@@ -1,3 +1,4 @@
+#given the input number, it finds the appropriate function and evaluates it
 solveQSI <- function(input, functions, x_array){
   counter = 1
   isFound = FALSE
@@ -19,6 +20,7 @@ solveQSI <- function(input, functions, x_array){
   }
 }
 
+#creates the functions per interval given the resulting matrix
 getFunctions <- function(array, raw_data, numOfEquations){
   funcArray = matrix(0L, nrow = ncol(raw_data)-1, ncol = 1, byrow = TRUE)
   counter = 1
@@ -88,6 +90,7 @@ getConnectingFunctions <- function(raw_data, preAugMatrix){
   return(preAugMatrix);
 }
 
+#sets up the equations to a matrix
 setUpMatrix <-function(augMatrix, preAugMatrix, raw_data, numOfEquations){
   column = 1
   row_counter = 1

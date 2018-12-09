@@ -3,11 +3,11 @@ options(guiToolkit="RGtk2")
 
 #UI for the application
 
-
 ## Not run:
 w <- gwindow("CIARA'S MINI SOLVER")
 nb <- gnotebook(container=w)
 
+#notebooks(tabs) for the  mainwindow
 pr <- ggroup(container = nb, label="Polynomial Regression", horizontal = FALSE)
 qsi <- ggroup(container = nb, label="Quadratic Spline Interpolation", horizontal = FALSE)
 s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE, use.scrollwindow=TRUE, expand=TRUE)
@@ -237,10 +237,12 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                      matrix = gaussJordanSimplex(matrix, isShow)
                      gaussJordan[] <- matrix
                      solutions = getSolution(matrix)
+                     solutions[1, ncol(solutions)] = -1 * solutions[1, ncol(solutions)]
                      solTable[] <- solutions
                    })
                  })
 
+#CHECKBOX FOR THE SIMPLEX
 showSolution <- gcheckbox("Show basic solution (initial and per iteration)", container=s, handler=function(h,...) {
   isShow <<- svalue(h$obj)
 })
