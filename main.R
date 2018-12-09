@@ -11,7 +11,6 @@ s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE, us
 
 a <- gfilebrowse("Upload csv file...",cont=qsi, 
      handler=function(h,...){
-       print(svalue(a))
        df1 <<- read.csv(svalue(a),header=FALSE,sep=",")
        vector_1 = data.matrix(as.numeric(df1$V1), rownames.force=NA)
        vector_2 = data.matrix(as.numeric(df1$V2), rownames.force=NA)
@@ -26,7 +25,6 @@ qsi_table <- gtable(c(0), container=qsi)
 
 b <- gfilebrowse("Upload csv file...",cont=s, 
                  handler=function(h,...){
-                   print(svalue(b))
                    df1 <<- read.csv(svalue(b),header=FALSE,sep=",")
                    matrix = data.matrix(df1, rownames.force=NA)
                    plants = c("Denver", "Pheonix", "Dallas")
@@ -218,7 +216,6 @@ b <- gfilebrowse("Upload csv file...",cont=s,
 
 c <- gfilebrowse("Upload csv file...",cont=pr, 
                  handler=function(h,...){
-                   print(svalue(c))
                    df1 <<- read.csv(svalue(c),header=FALSE,sep=",")
                    vector_1 = data.matrix(as.numeric(df1$V1), rownames.force=NA)
                    vector_2 = data.matrix(as.numeric(df1$V2), rownames.force=NA)

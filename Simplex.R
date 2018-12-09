@@ -41,7 +41,6 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
     counter = counter + 1
   }
   matrix[row_counter, slack_index] = 1
-  print(matrix)
   return(matrix)
 }
 
@@ -67,7 +66,6 @@ getFunctions <- function(matrix){
     functions[row_counter] = string
     row_counter = row_counter + 1
   }
-  print(functions)
   return(functions)
   #return the list of functions
 }
@@ -83,7 +81,6 @@ getColumn <- function(augMatrix){
   one_counter = apply(augMatrix, 2, function(c)sum(c==1))
   while (col_counter <= ncol(augMatrix)){
     if (negone_counter[col_counter] == 1 && zero_counter[col_counter] == nrow(augMatrix)-1 && one_counter[col_counter] == 0){
-      print(paste("will return: ", which(augMatrix[, col_counter] < 0)[1]))
       #on that column, which row has the negative one
       return(which(augMatrix[, col_counter] < 0)[1])
     }
@@ -123,7 +120,6 @@ gaussJordanSimplex <- function(augMatrix){
     }else{
       feasible = TRUE
     }
-    print(augMatrix)
   }
   while (length( which(augMatrix[nrow(augMatrix), 1:ncol(augMatrix)-1] <0)) > 0 ) {
     #get col of min negative value in last row

@@ -1,7 +1,10 @@
 solveQSI <- function(input, functions, x_array){
   counter = 1
   isFound = FALSE
-  while (counter < length(x_array)-1){
+  while (counter <= length(x_array)-1){
+    print(input)
+    print(x_array[counter])
+    print(x_array[counter+1])
     if (input >= x_array[counter] && input <= x_array[counter+1]){
       isFound = TRUE
       svalue(chosen_func_qsi_output) <- functions[counter]
@@ -12,8 +15,7 @@ solveQSI <- function(input, functions, x_array){
     counter = counter + 1
   }
   if (isFound == FALSE){
-    glabel(text = "Not within bounds.", markup = FALSE, editable = FALSE, handler = NULL,
-           action = NULL, container = qsi, toolkit = guiToolkit())
+    svalue(output_qsi) <- "Not within bounds"
   }
 }
 
