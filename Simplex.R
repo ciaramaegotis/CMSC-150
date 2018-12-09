@@ -44,11 +44,6 @@ setUpConstraints <- function(total_manufacturer, demands, supply, shipping_costs
   return(matrix)
 }
 
-normalize <- function(augMatrix, row, col){
-  augMatrix[row,] = augMatrix[row,]/augMatrix[row, col]
-  return(augMatrix)
-}
-
 getFunctions <- function(matrix){
   variables = colnames(matrix)
   functions = matrix(0L, nrow = nrow(matrix), ncol = 1, byrow=TRUE)
@@ -86,21 +81,23 @@ getColumn <- function(augMatrix){
     }
     col_counter = col_counter + 1
   }
-  
 }
 
 gaussJordanSimplex <- function(augMatrix){
   tr = vector(length = nrow(augMatrix)-1)
   feasible = FALSE
   while ( !feasible ) {
+    #gets the index where there is a negative in the basic solution set (serves as column)
     nonFeasibles = which(getSolution(augMatrix)[16:(length(getSolution(augMatrix))-1)] < 0 ) + 15
-    
-    
     if(length(nonFeasibles) > 0){
+      #which in thiss column has the -1 value (to know the row)
       pivotRow = which( augMatrix[, nonFeasibles[1]] == -1)
+      #gets the index of the left most in that row that is a positive number
       pivotCol = min( which( augMatrix[pivotRow, 1:nonFeasibles[1]] > 0) )
+      
+      #gets the test ratios except for the 
       i = 1
-      while(i <= nrow(augMatrix)-1){
+      while(i < nrow(augMatrix)){
         if(augMatrix[i,pivotCol] > 0){
           tr[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
           if(tr[i] == 0){
@@ -112,6 +109,7 @@ gaussJordanSimplex <- function(augMatrix){
         i = i + 1
       }
       
+      #gets the minimum among the test ratios then proceeds with normalization
       pivotRow = which.min(tr)
       augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
       
@@ -126,8 +124,11 @@ gaussJordanSimplex <- function(augMatrix){
       feasible = TRUE
     }
   }
+  #now that we have feasible basic solution set, we can now proceed with normal maximization
   while (length( which(augMatrix[nrow(augMatrix), 1:ncol(augMatrix)-1] <0)) > 0 ) {
+    #gets the most negative column
     pivotCol = which.min(augMatrix[nrow(augMatrix), 1:ncol(augMatrix) -1])
+    #gets the test raios
     i = 1
     while(i <= nrow(augMatrix)-1){
       if(augMatrix[i,pivotCol] > 0){
@@ -140,9 +141,9 @@ gaussJordanSimplex <- function(augMatrix){
       }
       i = i + 1
     }
-    
+    #minimumm of the test ratios (for pivotRow)
     pivotRow = which.min(tr)
-    
+    #normalization
     augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
     
     i = 1
@@ -152,12 +153,11 @@ gaussJordanSimplex <- function(augMatrix){
       }
       i = i + 1
     }
-    
-    
   }
   return(augMatrix)
 }
 
+#get the basic solution set given the current state of the matrix
 getSolution <- function(augMatrix){
   zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
   one_counter = apply(augMatrix, 2, function(c)sum(c==1))

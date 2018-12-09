@@ -1,14 +1,18 @@
 library(gWidgets2)
 options(guiToolkit="RGtk2")
 
+#UI for the application
+
+
 ## Not run:
-w <- gwindow("gnotebook example")
+w <- gwindow("CIARA'S MINI SOLVER")
 nb <- gnotebook(container=w)
 
 pr <- ggroup(container = nb, label="Polynomial Regression", horizontal = FALSE)
 qsi <- ggroup(container = nb, label="Quadratic Spline Interpolation", horizontal = FALSE)
 s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE, use.scrollwindow=TRUE, expand=TRUE)
 
+#QSI FILE UPLOADER
 a <- gfilebrowse("Upload csv file...",cont=qsi, 
      handler=function(h,...){
        df1 <<- read.csv(svalue(a),header=FALSE,sep=",")
@@ -41,6 +45,7 @@ qsi_table_def = matrix(0L, nrow = 1, ncol = 2, byrow=TRUE)
 colnames(qsi_table_def) = c("X", "Y")
 qsi_table <- gtable(qsi_table_def, container=qsi)
 
+#SIMPLEX FILE UPLOADER
 b <- gfilebrowse("Upload csv file...",cont=s, 
                  handler=function(h,...){
                    df1 <<- read.csv(svalue(b),header=FALSE,sep=",")
@@ -231,7 +236,7 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                      solTable[] <- solutions
                    })
                  })
-
+#POLYNOMIAL REGRESSION FILE UPLOADER
 c <- gfilebrowse("Upload csv file...",cont=pr, 
                  handler=function(h,...){
                    df1 <<- read.csv(svalue(c),header=FALSE,sep=",")

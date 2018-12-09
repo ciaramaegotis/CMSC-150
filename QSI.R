@@ -38,6 +38,7 @@ getFunctions <- function(array, raw_data, numOfEquations){
   return(funcArray)
 }
 
+
 getInternalFunctions <- function(raw_data){
   arrayOfFunctions = matrix(0L, nrow = (2*(ncol(raw_data)-2)), ncol = 1, byrow=TRUE)
   arrayOfFunctions_iterator = 1
@@ -54,8 +55,6 @@ getInternalFunctions <- function(raw_data){
     arrayOfFunctions_iterator = arrayOfFunctions_iterator + 1
     counter = counter + 1
   }
-  #glabel(text = arrayOfFunctions, markup = FALSE, editable = FALSE, handler = NULL,
-  #                action = NULL, container = g, toolkit = guiToolkit())
   return(preAugMatrix);
 }
 
@@ -73,8 +72,6 @@ getExternalFunctions <- function(raw_data, preAugMatrix){
   
   preAugMatrix[2*(ncol(raw_data)-2)+2,] = c((raw_data[1,counter+1]^2), raw_data[1, counter+1], 1, raw_data[2, counter+1])
   
-  #glabel(text = arrayOfFunctions, markup = FALSE, editable = FALSE, handler = NULL,
-  #      action = NULL, container = g, toolkit = guiToolkit())
   return(preAugMatrix)
   
 }
@@ -88,8 +85,6 @@ getConnectingFunctions <- function(raw_data, preAugMatrix){
     preAugMatrix[nrow(preAugMatrix)-(ncol(raw_data)-2)+counter,] = c(raw_data[1, counter+1]*2, 1, raw_data[1,counter+1]*2, 1)
     counter = counter + 1
   }
-  #glabel(text = arrayOfFunctions, markup = FALSE, editable = FALSE, handler = NULL,
-  #      action = NULL, container = g, toolkit = guiToolkit())
   return(preAugMatrix);
 }
 
