@@ -80,36 +80,76 @@ getColumn <- function(augMatrix){
   col_counter = 1
   negone_counter = apply(augMatrix, 2, function(c)sum(c==-1))
   zero_counter = apply(augMatrix, 2, function(c)sum(c==0))
+  one_counter = apply(augMatrix, 2, function(c)sum(c==1))
   while (col_counter <= ncol(augMatrix)){
-    if (negone_counter[col_counter] == 1 && zero_counter[col_counter] == nrow(augMatrix)-1){
+    if (negone_counter[col_counter] == 1 && zero_counter[col_counter] == nrow(augMatrix)-1 && one_counter[col_counter] == 0){
+      print(paste("will return: ", which(augMatrix[, col_counter] < 0)[1]))
+      #on that column, which row has the negative one
       return(which(augMatrix[, col_counter] < 0)[1])
     }
+    col_counter = col_counter + 1
   }
+  
 }
 
 gaussJordanSimplex <- function(augMatrix){
-  basicSolutionSet = getSolution(augMatrix)
-  while (sum(basicSolutionSet < 0) != 0){
-    column = which(augMatrix[getColumn(augMatrix),] > 0)[1]
-    print("done :)")
-    row = which.max(1/(augMatrix[, ncol(augMatrix)]/augMatrix[, column]))
-    print(column)
-    print(row)
-    #now that we have the row and column, normalize the row
-    augMatrix = normalize(augMatrix, row, column)
-    row_counter = 1
-    while (row_counter <= nrow(augMatrix)){
-      jnot = augMatrix[row_counter, column]
-      if (row_counter != row){
-        col_counter = 1
-        while (col_counter <= ncol(augMatrix)){
-          augMatrix[row_counter, col_counter] = augMatrix[row_counter, col_counter] - (augMatrix[row, col_counter]*jnot)
-          col_counter = col_counter + 1
+  row_vec = vector(length = nrow(augMatrix)-1)
+  feasible = FALSE
+  while ( !feasible ) {
+    nonFeasibles = which(getSolution(augMatrix)[1:length(getSolution(augMatrix))-1] < 0)
+    if(length(nonFeasibles) > 0){
+      pivotRow = which( augMatrix[, nonFeasibles[1]] == -1)
+      pivotCol = min( which( augMatrix[pivotRow, 1:nonFeasibles[1]] > 0) )
+      i = 1
+      while(i <= nrow(augMatrix)-1){
+        if(augMatrix[i,pivotCol] > 0){
+          row_vec[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+        }else{
+          row_vec[i] = NA
         }
+        i = i + 1
       }
-      row_counter = row_counter + 1
+      pivotRow = which.min(row_vec)
+      augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
+      
+      i = 1
+      while(i <= nrow(augMatrix)){
+        if(i != pivotRow){
+          augMatrix[i,] = augMatrix[i, ] - (augMatrix[pivotRow, ] * augMatrix[i, pivotCol])
+        }
+        i = i + 1
+      }
+      
+    }else{
+      feasible = TRUE
     }
-    basicSolutionSet = getSolution(augMatrix)
+    print(augMatrix)
+  }
+  while (length( which(augMatrix[nrow(augMatrix), 1:ncol(augMatrix)-1] <0)) > 0 ) {
+    #get col of min negative value in last row
+    #pivotCol = findColOfMinNeg(mat[nrow(mat), 1:ncol(mat) -1])
+    pivotCol = which.min(augMatrix[nrow(augMatrix), 1:ncol(augMatrix) -1])
+    #get tr's
+    i = 1
+    while(i <= nrow(augMatrix)-1){
+      if(augMatrix[i,pivotCol] > 0){
+        row_vec[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+      }else{
+        row_vec[i] = NA
+      }
+      i = i + 1
+    }
+    pivotRow = which.min(row_vec)
+    augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
+    i = 1
+    while(i <= nrow(augMatrix)){
+      if(i != pivotRow){
+        augMatrix[i,] = augMatrix[i, ] - (augMatrix[pivotRow, ] * augMatrix[i, pivotCol])
+      }
+      i = i + 1
+    }
+    
+    
   }
   return(augMatrix)
 }
