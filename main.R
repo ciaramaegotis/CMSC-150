@@ -7,7 +7,7 @@ nb <- gnotebook(container=w)
 
 pr <- ggroup(container = nb, label="Polynomial Regression", horizontal = FALSE)
 qsi <- ggroup(container = nb, label="Quadratic Spline Interpolation", horizontal = FALSE)
-s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE)
+s <- ggroup(container = nb, label="Simplex Minimization", horizontal = FALSE, use.scrollwindow=TRUE, expand=TRUE)
 
 a <- gfilebrowse("Upload csv file...",cont=qsi, 
      handler=function(h,...){
@@ -194,18 +194,12 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    #create a button that would do the following below
                    solve <- gbutton("Solve!", container = s, handler = function(h,...){
                      source("Simplex.R")
-                     print("solve")
-                     print(supply)
                      matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
                      initLabel <- glabel("Initial Tableau", container=s)
                      obj <- gtable(matrix, container=s, editable=TRUE)
                      functions = getFunctions(matrix)
-                     functions_counter = 1
-                     while (functions_counter <= length(functions)){
-                       functionOutput <- glabel(text = functions[functions_counter], markup = FALSE, editable = TRUE, handler = function(h,...){print("EDITTED")},
-                                                action = NULL, container = s)
-                       functions_counter = functions_counter + 1
-                     }
+                     colnames(functions) <- c("Equations")
+                     funcs <- gtable(functions, container=s, editable=TRUE)
                      #TO DO: create global button to solve
                      matrix = gaussJordanSimplex(matrix)
                      gaussLabel <- glabel("Final Matrix", container=s)
