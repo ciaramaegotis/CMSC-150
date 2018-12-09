@@ -90,23 +90,29 @@ getColumn <- function(augMatrix){
 }
 
 gaussJordanSimplex <- function(augMatrix){
-  row_vec = vector(length = nrow(augMatrix)-1)
+  tr = vector(length = nrow(augMatrix)-1)
   feasible = FALSE
   while ( !feasible ) {
-    nonFeasibles = which(getSolution(augMatrix)[1:length(getSolution(augMatrix))-1] < 0)
+    nonFeasibles = which(getSolution(augMatrix)[16:(length(getSolution(augMatrix))-1)] < 0 ) + 15
+    
+    
     if(length(nonFeasibles) > 0){
       pivotRow = which( augMatrix[, nonFeasibles[1]] == -1)
       pivotCol = min( which( augMatrix[pivotRow, 1:nonFeasibles[1]] > 0) )
       i = 1
       while(i <= nrow(augMatrix)-1){
         if(augMatrix[i,pivotCol] > 0){
-          row_vec[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+          tr[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+          if(tr[i] == 0){
+            tr[i] = NA
+          }
         }else{
-          row_vec[i] = NA
+          tr[i] = NA
         }
         i = i + 1
       }
-      pivotRow = which.min(row_vec)
+      
+      pivotRow = which.min(tr)
       augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
       
       i = 1
@@ -116,27 +122,29 @@ gaussJordanSimplex <- function(augMatrix){
         }
         i = i + 1
       }
-      
     }else{
       feasible = TRUE
     }
   }
   while (length( which(augMatrix[nrow(augMatrix), 1:ncol(augMatrix)-1] <0)) > 0 ) {
-    #get col of min negative value in last row
-    #pivotCol = findColOfMinNeg(mat[nrow(mat), 1:ncol(mat) -1])
     pivotCol = which.min(augMatrix[nrow(augMatrix), 1:ncol(augMatrix) -1])
-    #get tr's
     i = 1
     while(i <= nrow(augMatrix)-1){
       if(augMatrix[i,pivotCol] > 0){
-        row_vec[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+        tr[i] = augMatrix[i, ncol(augMatrix)] /augMatrix[i, pivotCol] 
+        if(tr[i] == 0){
+          tr[i] = NA
+        }
       }else{
-        row_vec[i] = NA
+        tr[i] = NA
       }
       i = i + 1
     }
-    pivotRow = which.min(row_vec)
+    
+    pivotRow = which.min(tr)
+    
     augMatrix[pivotRow, ] = augMatrix[pivotRow, ] / augMatrix[pivotRow, pivotCol]
+    
     i = 1
     while(i <= nrow(augMatrix)){
       if(i != pivotRow){
