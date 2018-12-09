@@ -192,21 +192,25 @@ b <- gfilebrowse("Upload csv file...",cont=s,
                    tablePractice[5, 7] <- sc_57
                    
                    #create a button that would do the following below
+                   initLabel <- glabel("Initial Tableau", container=s)
+                   initTable <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   funcs <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   gaussLabel <- glabel("Final Matrix", container=s)
+                   gaussJordan <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   solLabel <- glabel("Solution Set", container = s)
+                   solTable <- gtable(matrix(0L, nrow = 3, ncol = 3, byrow=TRUE), container=s, editable=TRUE)
+                   
                    solve <- gbutton("Solve!", container = s, handler = function(h,...){
                      source("Simplex.R")
                      matrix = setUpConstraints(total_manufacturer, demands, supply, shipping_costs, plants, warehouses)
-                     initLabel <- glabel("Initial Tableau", container=s)
-                     obj <- gtable(matrix, container=s, editable=TRUE)
+                     initTable[] <- matrix
                      functions = getFunctions(matrix)
                      colnames(functions) <- c("Equations")
-                     funcs <- gtable(functions, container=s, editable=TRUE)
-                     #TO DO: create global button to solve
+                     funcs[] <- functions
                      matrix = gaussJordanSimplex(matrix)
-                     gaussLabel <- glabel("Final Matrix", container=s)
-                     gaussJordan <- gtable(matrix, container=s, editable=TRUE)
+                     gaussJordan[] <- matrix
                      solutions = getSolution(matrix)
-                     solLabel <- glabel("Solution Set", container = s)
-                     solTable <- gtable(solutions, container=s, editable=TRUE)
+                     solTable[] <- solutions
                    })
                  })
 
